@@ -1,3 +1,4 @@
+include(":kmmsharedmodule")
 rootProject.name = "wiz2"
 
 pluginManagement {
