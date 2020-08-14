@@ -1,21 +1,10 @@
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
-"
 plugins {
     kotlin("multiplatform")
     id("com.android.library")
-    id("kotlin-android-extensions")
 }
 
-repositories {
-    gradlePluginPortal()
-    google()
-    jcenter()
-    mavenCentral()
-    maven {
-        url = uri("https://dl.bintray.com/kotlin/kotlin-eap")
-    }
-}
 kotlin {
     android()
     ios {
@@ -33,35 +22,26 @@ kotlin {
                 implementation(kotlin("test-annotations-common"))
             }
         }
-        val androidMain by getting {
-            dependencies {
-                implementation("androidx.core:core-ktx:1.2.0")
-            }
-        }
+        val androidMain by getting
         val androidTest by getting {
             dependencies {
-                implementation("junit:junit:4.12")
+                implementation("junit:junit:${properties["version.junit"]}")
             }
         }
         val iosMain by getting
         val iosTest by getting
     }
 }
+
 android {
-    compileSdkVersion(29)
-    sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
+    compileSdkVersion((properties["android.compileSdk"] as String).toInt())
     defaultConfig {
-        minSdkVersion(24)
-        targetSdkVersion(29)
-        versionCode = 1
-        versionName = "1.0"
+        minSdkVersion((properties["android.minSdk"] as String).toInt())
+        targetSdkVersion((properties["android.targetSdk"] as String).toInt())
     }
-    buildTypes {
-        getByName("release") {
-            isMinifyEnabled = false
-        }
-    }
+    sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
 }
+
 val packForXcode by tasks.creating(Sync::class) {
     group = "build"
     val mode = System.getenv("CONFIGURATION") ?: "DEBUG"
